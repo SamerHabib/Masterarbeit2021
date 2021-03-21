@@ -9,6 +9,7 @@ if __name__ == '__main__':
     g = Graph()
     g.getVehicleSetTrips()
 
+    v = VehicleTrip(0,0, (0,0,0), (10,10,10), )
     pool = Pool()  # Create a multiprocessing Pool
     listV = pool.map(findoptimalpartition, g.VehicleTrips)
     pool.close()
