@@ -1,16 +1,60 @@
-# This is a sample Python script.
+import numpy
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from Classifying import classifyTheLineSegments, computeScore
+from Graph import *
+from Partitioning import findoptimalpartition
+from multiprocessing import Pool
 
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    g = Graph()
+    g.getVehicleSetTrips()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    pool = Pool()  # Create a multiprocessing Pool
+    listV = pool.map(findoptimalpartition, g.VehicleTrips)
+    pool.close()
+
+    allLineSegments = []
+    for x in listV:
+        allLineSegments += x.getLineSegments()
+
+    allSet = classifyTheLineSegments(allLineSegments)
+
+    numberOfVehicles = len(g.VehicleTrips)
+    matrix = numpy.zeros(shape=(numberOfVehicles, numberOfVehicles))
+
+    for set in allSet:
+        computeScore(set, matrix)
+
+    MatrixNorm = matrix / numpy.abs(matrix).max()
+
+    F = []
+    allV = g.VehicleTrips
+    for i in range(numberOfVehicles):
+        for j in range(i + 1):
+            sc = MatrixNorm[j][i]
+            if sc > 0:
+                fk = [allV[i], allV[j]]
+                F.append(fk)
+                # fk.append(vIDS[i])
+                # fk.append(vIDS[j])
+    for v in g.VehicleTrips:
+        for fs in F:
+            exists = v in fs
+            valid = True
+            if (not exists):
+                for hn in fs:
+                    sc = MatrixNorm[v.index][hn.index]
+                    if not (sc > 0):
+                        valid = False
+                        break
+                if (valid):
+                    fs2 = fs.copy()
+                    fs2.append(v)
+                    F.append(fs2)
+
+    i = 0
+
+
+
+
+
