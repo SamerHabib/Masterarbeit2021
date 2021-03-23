@@ -7,6 +7,8 @@ class VehicleTrip:
         self.index = None
         self.orgin = None
         self.end = None
+        self.orginId = None
+        self.endId = None
         self.points = None
         self.partitionpoints = []
         self.LineSegments = []

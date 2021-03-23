@@ -2,6 +2,7 @@ import math
 
 from Distance import *
 from LineSegment import LineSegment
+from Plotlib import *
 
 
 def classifyTheLineSegments(lineSegments):
@@ -14,8 +15,10 @@ def classifyTheLineSegments(lineSegments):
         currentIndex = startIndex + 1
         while currentIndex < len(lineSegments):
             line2 = lineSegments[currentIndex]
-            angle = angleLineSegment2LineSegment(line1.startpoint, line1.endpoint, line2.startpoint, line2.endpoint)
-            if abs(angle) <= 75:
+            angle = angleLineSegment2LineSegment1(line1.startpoint, line1.endpoint, line2.startpoint, line2.endpoint)
+            cosAngle = cosAngleLineSegment2LineSegment(line1.startpoint, line1.endpoint, line2.startpoint, line2.endpoint)
+            if cosAngle > math.cos(math.radians(75)):
+            #if abs(angle) <= 75:
                 valid = checkDistanceBetweenTwoLines(line1, line2)
                 if valid:
                     _set.append(line2)
@@ -58,7 +61,8 @@ def checkDistanceBetweenTwoLines(line1, line2):
 def computeScore(set, matrix):
     line1 = set[0]
     currentIndex = 1
-    ang = angleLineSegment2LineSegment((0, 1), (1, 1), line1.startpoint, line1.endpoint)
+    ang1 = angleLineSegment2LineSegment1((0, 1, 0), (1, 1, 0), line1.startpoint, line1.endpoint)
+    ang = math.degrees(angleLineSegment2LineSegment((0, 1, 0), (1, 1, 0), line1.startpoint, line1.endpoint))
     while currentIndex < len(set):
         line2 = set[currentIndex]
         currentIndex = currentIndex+1
@@ -87,8 +91,8 @@ def rotate(point, ang):
         angle = math.radians(ang - 180)
     else:
         angle = math.radians(360 - ang)
-    x = (math.cos(angle) * xc) +  (math.sin(angle) * yc)
-    y = (-1 * math.sin(angle) * xc) + (math.cos(angle) * yc)
+    x = (math.cos(angle) * point[0]) +  (math.sin(angle) * point[1])
+    y = (-1 * math.sin(angle) * point[0]) + (math.cos(angle) * point[1])
     z = zc
     newpoint = (x, y, z)
     return  newpoint

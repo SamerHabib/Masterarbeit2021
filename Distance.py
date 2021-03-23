@@ -2,7 +2,7 @@ import math
 
 import numpy as np
 
-from Vectors import compute_inner_product
+from Vectors import *
 
 # Function to find distance https://www.geeksforgeeks.org/program-to-calculate-distance-between-two-points-in-3-d/
 def Point2Point(point1, point2, withoutZ = False):
@@ -34,8 +34,8 @@ def distancePoint2LineSegment(spoint, epoint, point,withoutZ = False):
     vector2 = ex - sx, ey - sy, ez - sz
     dd = np.cross([ex - sx, ey - sy], [sx - x, sy - y])
     # a coefficient(0 <= b <= 1)
-    m_coefficient = compute_inner_product(vector1, vector2) / (
-            compute_inner_product(vector2, vector2) + 0.000000000000000001)
+    m_coefficient = computeDotProduct(vector1, vector2) / (
+            computeDotProduct(vector2, vector2) + 0.000000000000000001)
     if math.isnan(m_coefficient):
         m_coefficient = 0.0
     m_projectionpoint = (
@@ -47,14 +47,13 @@ def distancePoint2LineSegment(spoint, epoint, point,withoutZ = False):
     dinfo = (distance, m_projectionpoint, m_coefficient)
     return dinfo
 
-def angleLineSegment2LineSegment(s1, e1, s2, e2):
+def angleLineSegment2LineSegment1(s1, e1, s2, e2):
     alpha1 = math.atan2(e1[1] - s1[1], e1[0] - s1[0])
     alpha2 = math.atan2(e2[1] - s2[1], e2[0] - s2[0])
     angle = math.fabs(np.degrees(alpha2 - alpha1))
     return angle
 
 def angleDisntanceLineSegment2LineSegment(s1, e1, s2, e2):
-
     alpha1 = math.atan2(e1[1] - s1[1], e1[0] - s1[0])
     alpha2 = math.atan2(e2[1] - s2[1], e2[0] - s2[0])
     d1 = math.fabs(Point2Point(e1, s1, True))
@@ -63,3 +62,13 @@ def angleDisntanceLineSegment2LineSegment(s1, e1, s2, e2):
     angd = d * math.fabs(math.sin(alpha2 - alpha1))
     return angd
 
+def cosAngleLineSegment2LineSegment(s1, e1, s2, e2):
+    v1 = vector(s1, e1)
+    v2 = vector(s2, e2)
+    cost = dotproduct(v1, v2) / (length1(v1) * length1(v2))
+    return cost
+
+def angleLineSegment2LineSegment(s1, e1, s2, e2):
+    cost = cosAngleLineSegment2LineSegment(s1, e1, s2, e2)
+    angle = math.acos(cost)
+    return angle
