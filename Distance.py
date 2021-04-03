@@ -25,22 +25,22 @@ def perpendicularDistanceLineSegment2LineSegment(fpoint, spoint, fpoint2, spoint
 
 def distancePoint2LineSegment(spoint, epoint, point,withoutZ = False):
     x, y, z = point
-    sx, sy, sz = spoint
-    ex, ey, ez = epoint
+    sortedPoint = sorted([spoint, epoint])
+    sx, sy, sz = sortedPoint[0]
+    ex, ey, ez = sortedPoint[1]
 
     if(withoutZ):
         sz = ez = z = 0
     vector1 = x - sx, y - sy, z - sz
-    vector2 = ex - sx, ey - sy, ez - sz
+    vector2 = sx - ex, sy - ey, sz - ez
     dd = np.cross([ex - sx, ey - sy], [sx - x, sy - y])
     # a coefficient(0 <= b <= 1)
-    m_coefficient = computeDotProduct(vector1, vector2) / (
-            computeDotProduct(vector2, vector2) + 0.000000000000000001)
+    m_coefficient = dotproduct(vector1, vector2) / (dotproduct(vector2, vector2))
     if math.isnan(m_coefficient):
         m_coefficient = 0.0
     m_projectionpoint = (
-    sx + (vector2[0] * m_coefficient), sy + (vector2[1] * m_coefficient), sz * (vector2[2] * m_coefficient))
-    if epoint == point:
+    sx + (vector2[0] * m_coefficient), sy + (vector2[1] * m_coefficient), sz + (vector2[2] * m_coefficient))
+    if sortedPoint[1] == point:
         return (0, point, 0)
     # plt.plot((point.x, m_projectionpoint.x), (point.y, m_projectionpoint.y))
     distance = Point2Point(point, m_projectionpoint, True)
@@ -65,8 +65,11 @@ def angleDisntanceLineSegment2LineSegment(s1, e1, s2, e2):
 def cosAngleLineSegment2LineSegment(s1, e1, s2, e2):
     v1 = vector(s1, e1)
     v2 = vector(s2, e2)
-    cost = dotproduct(v1, v2) / (length1(v1) * length1(v2))
-    return cost
+    l = (length1(v1) * length1(v2))
+    if l != 0:
+        cost = dotproduct(v1, v2) / l
+        return cost
+    return 0
 
 def angleLineSegment2LineSegment(s1, e1, s2, e2):
     cost = cosAngleLineSegment2LineSegment(s1, e1, s2, e2)

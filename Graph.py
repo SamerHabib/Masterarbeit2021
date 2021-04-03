@@ -16,7 +16,7 @@ class Graph:
 
     def getVehicleSetTrips(self):
         with self.driver.session() as session:
-            result = session.run("MATCH (n:VehicleSet) where ID(n) = 2850 with n Limit 1 Match (n)-[r:CONSISTS_OF]->(rp:Vehicle) with rp"
+            result = session.run("MATCH (n:VehicleSet) where ID(n) = 692 with n Limit 1 Match (n)-[r:CONSISTS_OF]->(rp:Vehicle) with rp"
                                   " MATCH (rp)-[:START_AT]->(n1:RoadPoint), (rp)-[:END_AT]->(n2:RoadPoint)"
                                   " CALL algo.shortestPath.stream(n1, n2, 'distance',{relationshipQuery:'ROAD_SEGMENT'})"
                                   " YIELD nodeId, cost"
@@ -47,8 +47,9 @@ class Graph:
                 pointId = rec[0].id
                 r = None
                 x, y, z = geodetic_to_ecef(lat, lon, 0)
-                z = 0
+
                 p1 = (x, y, z)
+
                 pointsID.append(pointId)
                 pointsLine.append(p1)
 
